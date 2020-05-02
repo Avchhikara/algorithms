@@ -1,27 +1,38 @@
 class Node:
     def __init__(self, val):
         self.val = val
-        self.left = self.right = None
+        self.children = []
+
+    def __str__(self):
+        return f"Value: {self.val}, with children: {self.children}"
 
 
 class LCA:
     def __init__(self, tree):
-        l = len(tree)*2
         self.__nodes = []
         self.__depth = []
-        self.__last = [0]*len(tree)
         self.__tree = tree
         self.__construct()
 
     def __construct(self):
-        self.__dfs(0, len(), 0, 0)
+        self.__dfs(self.__tree, 0)
         print(self.__depth, self.__nodes)
 
-    def __dfs(self, low, high, pos, depth):
-        if low <= high and pos <= high:
+    def __dfs(self, node, depth):
+        if node:
             self.__depth.append(depth)
-            self.__nodes.append(pos)
-            left = self.__dfs(low, high, 2*pos + 1, depth + 1)
-            right = self.__dfs(low, high, 2*pos + 2, depth + 1)
-            self.__depth.append(depth)
-            self.__nodes.append(pos)
+            self.__nodes.append(node.val)
+            for child in node.children:
+                self.__dfs(child, depth + 1)
+                self.__depth.append(depth)
+                self.__nodes.append(node.val)
+
+
+tree = Node(0)
+tree.children.append(Node(1))
+tree.children[0].children.append(Node(3))
+tree.children.append(Node(2))
+tree.children[1].children.append(Node(4))
+tree.children[1].children[0].children.append(Node(5))
+print(tree)
+lca = LCA(tree)
